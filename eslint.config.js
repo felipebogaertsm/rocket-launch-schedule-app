@@ -10,6 +10,12 @@ module.exports = defineConfig([
   {
     plugins: {
       prettier: require('eslint-plugin-prettier'),
+      import: require('eslint-plugin-import'),
+    },
+    settings: {
+      'import/resolver': {
+        typescript: { project: './tsconfig.json' },
+      },
     },
     rules: {
       'prettier/prettier': 'error',

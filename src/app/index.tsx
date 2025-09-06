@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    gap: 12,            // adds spacing between title, subtitle, and button
+    gap: 12,
   },
   centerText: {
     textAlign: 'center',

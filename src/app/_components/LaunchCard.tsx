@@ -1,9 +1,12 @@
 import { formatDateTimeISO } from '@/common/date';
+import { useTheme } from '@/styles/theme';
 import type { LL2Launch } from '@/types/launches';
 import { Link } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
 export default function LaunchCard({ launch }: { launch: LL2Launch }) {
+  const { colors, typography } = useTheme();
+
   const provider = launch.launch_service_provider?.name;
   const pad = launch.pad?.name;
   const place = launch.pad?.location?.name;
@@ -12,7 +15,14 @@ export default function LaunchCard({ launch }: { launch: LL2Launch }) {
 
   return (
     <Link href={`/launches/${launch.id}`} asChild>
-      <View style={{ flexDirection: 'row', gap: 12, padding: 16 }}>
+      <Pressable
+        style={{
+          flexDirection: 'row',
+          gap: 12,
+          padding: 16,
+          backgroundColor: colors.background,
+        }}
+      >
         {launch.image ? (
           <Image
             source={{ uri: launch.image }}
@@ -20,7 +30,7 @@ export default function LaunchCard({ launch }: { launch: LL2Launch }) {
               width: 96,
               height: 96,
               borderRadius: 8,
-              backgroundColor: '#222',
+              backgroundColor: colors.subtitle,
             }}
             resizeMode="cover"
           />
@@ -30,24 +40,30 @@ export default function LaunchCard({ launch }: { launch: LL2Launch }) {
               width: 96,
               height: 96,
               borderRadius: 8,
-              backgroundColor: '#222',
+              backgroundColor: colors.subtitle,
             }}
           />
         )}
 
         <View style={{ flex: 1 }}>
-          <Text style={{ fontWeight: '700', fontSize: 16 }} numberOfLines={2}>
+          <Text
+            style={[typography.h2, { color: colors.text }]}
+            numberOfLines={2}
+          >
             {launch.name}
           </Text>
-          <Text style={{ color: '#666', marginTop: 2 }}>{when}</Text>
-          <Text style={{ color: '#666' }} numberOfLines={1}>
+
+          <Text style={{ color: colors.subtitle, marginTop: 2 }}>{when}</Text>
+
+          <Text style={{ color: colors.subtitle }} numberOfLines={1}>
             {provider ?? 'Unknown provider'}
             {pad ? ` • ${pad}` : ''}
             {place ? ` — ${place}` : ''}
           </Text>
-          <Text style={{ marginTop: 6, color: '#0a7' }}>{status}</Text>
+
+          <Text style={{ marginTop: 6, color: colors.primary }}>{status}</Text>
         </View>
-      </View>
+      </Pressable>
     </Link>
   );
 }

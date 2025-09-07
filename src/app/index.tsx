@@ -1,12 +1,11 @@
 import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query';
 import { FlatList, RefreshControl, View } from 'react-native';
 
-import EmptyState from '@/components/EmptyState';
 import ErrorView from '@/components/ErrorView';
-import LaunchCard from '@/components/LaunchCard';
 import Loading from '@/components/Loading';
 import { fetchUpcomingLaunches } from '@/services/launches';
 import type { LL2Launch, LL2Paginated } from '@/types/launches';
+import { EmptyState, LaunchCard } from './_components';
 
 export default function HomeScreen() {
   const limit = 20;

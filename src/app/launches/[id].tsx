@@ -1,4 +1,3 @@
-import { fetchLaunchById } from '@/services/launches';
 import { useQuery } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import {
@@ -9,6 +8,9 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import { InfoRow } from '@/components';
+import { fetchLaunchById } from '@/services/launches';
 
 export default function LaunchDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -82,15 +84,6 @@ export default function LaunchDetailsScreen() {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   center: {
     flex: 1,
@@ -109,10 +102,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   bannerFallback: { alignItems: 'center', justifyContent: 'center' },
-
-  row: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-  label: { color: '#555' },
-  value: { fontWeight: '600' },
 
   h2: { fontSize: 18, fontWeight: '700', marginBottom: 6 },
   body: { fontSize: 15, color: '#333', lineHeight: 20 },

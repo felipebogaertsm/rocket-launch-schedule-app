@@ -1,36 +1,72 @@
-import { useTheme } from '@/styles/theme';
-import { Link } from 'expo-router';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query';
+import { FlatList, RefreshControl, View } from 'react-native';
 
-export default function Home() {
-  const theme = useTheme();
+import EmptyState from '@/components/EmptyState';
+import ErrorView from '@/components/ErrorView';
+import LaunchCard from '@/components/LaunchCard';
+import Loading from '@/components/Loading';
+import { fetchUpcomingLaunches } from '@/services/launches';
+import type { LL2Launch, LL2Paginated } from '@/types/launches';
+
+export default function HomeScreen() {
+  const limit = 20;
+
+  const {
+    data: items,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<
+    LL2Paginated<LL2Launch>,
+    Error,
+    LL2Launch[],
+    QueryKey,
+    string | null
+  >({
+    queryKey: ['launches', 'upcoming', { limit }],
+    initialPageParam: null,
+    queryFn: ({ pageParam }) =>
+      pageParam
+        ? fetchUpcomingLaunches({ nextUrl: pageParam })
+        : fetchUpcomingLaunches({ limit }),
+    getNextPageParam: (lastPage) => lastPage.next,
+    staleTime: 60_000,
+    select: (infinite) => infinite.pages.flatMap((p) => p.results),
+  });
+
+  if (isLoading) return <Loading />;
+  if (isError)
+    return <ErrorView message={error.message} onRetry={() => refetch()} />;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[theme.typography.h1, styles.centerText, { color: theme.colors.text }]}>
-        Welcome! 🚀
-      </Text>
-
-      <Text style={[theme.typography.h2, styles.centerText, { color: theme.colors.subtitle }]}>
-        Explore the latest rocket launches
-      </Text>
-
-      <Link href="/launches" asChild>
-        <Button title="Go to Launches" color={theme.colors.primary} />
-      </Link>
+    <View style={{ flex: 1, backgroundColor: '#0b0b0c' }}>
+      <FlatList
+        data={items ?? []}
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+          />
+        }
+        renderItem={({ item }) => (
+          <View style={{ borderBottomColor: '#1b1b1d', borderBottomWidth: 1 }}>
+            <LaunchCard launch={item} />
+          </View>
+        )}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.5}
+        ListEmptyComponent={<EmptyState hint="Try pulling to refresh." />}
+        ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
+        contentContainerStyle={{ paddingBottom: 12 }}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    gap: 12,
-  },
-  centerText: {
-    textAlign: 'center',
-  },
-});

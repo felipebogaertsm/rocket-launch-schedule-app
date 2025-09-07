@@ -8,8 +8,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <Stack>
-        <Stack.Screen name='index' options={{title: "Home"}}/>
-        <Stack.Screen name='launches/index' options={{title: "Launches"}}/>
+        <Stack.Screen name="index" options={{ title: 'Launches' }} />
       </Stack>
     </QueryClientProvider>
   );

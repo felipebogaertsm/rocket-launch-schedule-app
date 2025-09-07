@@ -1,4 +1,3 @@
-
 export type LL2Status = { id: number; name: string; abbrev?: string };
 
 export type LL2Provider = { id: number; name: string };
@@ -14,7 +13,7 @@ export type LL2Mission = { id: number; name: string; description?: string };
 export type LL2Launch = {
   id: string;
   name: string;
-  net: string; // ISO datetime (No Earlier Than)
+  net: string;
   image?: string | null;
   status?: LL2Status;
   mission?: LL2Mission | null;
@@ -29,4 +28,10 @@ export type LL2Paginated<T> = {
   next: string | null;
   previous: string | null;
   results: T[];
+};
+
+export type UpcomingParams = {
+  limit?: number;
+  search?: string;
+  nextUrl?: string | null;
 };

@@ -1,4 +1,5 @@
 import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query';
+import { Stack } from 'expo-router';
 import { FlatList, RefreshControl, View } from 'react-native';
 
 import ErrorView from '@/components/ErrorView';
@@ -38,34 +39,46 @@ export default function HomeScreen() {
     select: (infinite) => infinite.pages.flatMap((p) => p.results),
   });
 
-  if (isLoading) return <Loading />;
-  if (isError)
-    return <ErrorView message={error.message} onRetry={() => refetch()} />;
-
   return (
-    <View style={{ flex: 1, backgroundColor: '#0b0b0c' }}>
-      <FlatList
-        data={items ?? []}
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={() => refetch()}
-          />
-        }
-        renderItem={({ item }) => (
-          <View style={{ borderBottomColor: '#1b1b1d', borderBottomWidth: 1 }}>
-            <LaunchCard launch={item} />
-          </View>
-        )}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Upcoming Launches',
         }}
-        onEndReachedThreshold={0.5}
-        ListEmptyComponent={<EmptyState hint="Try pulling to refresh." />}
-        ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
-        contentContainerStyle={{ paddingBottom: 12 }}
       />
-    </View>
+
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        <ErrorView message={error.message} onRetry={() => refetch()} />
+      ) : (
+        <View style={{ flex: 1, backgroundColor: '#0b0b0c' }}>
+          <FlatList
+            data={items ?? []}
+            keyExtractor={(item) => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={() => refetch()}
+              />
+            }
+            renderItem={({ item }) => (
+              <View
+                style={{ borderBottomColor: '#1b1b1d', borderBottomWidth: 1 }}
+              >
+                <LaunchCard launch={item} />
+              </View>
+            )}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+            }}
+            onEndReachedThreshold={0.5}
+            ListEmptyComponent={<EmptyState hint="Try pulling to refresh." />}
+            ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
+            contentContainerStyle={{ paddingBottom: 12 }}
+          />
+        </View>
+      )}
+    </>
   );
 }

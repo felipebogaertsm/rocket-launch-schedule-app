@@ -7,9 +7,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack>
-        <Stack.Screen name="index" options={{ title: 'Launches' }} />
-      </Stack>
+      <Stack screenOptions={{ title: 'Rocket Launch Schedule' }} />
     </QueryClientProvider>
   );
 }
